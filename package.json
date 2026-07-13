@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  },
+  "private": true,
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "dev": "concurrently \"cd client && npm run dev\" \"cd server && node index.js\"",
+    "build": "npm run build -w=client"
+  }
+
+}
