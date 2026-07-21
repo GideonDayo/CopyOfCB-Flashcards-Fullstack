@@ -8,7 +8,6 @@ router.get('/', async (req, res) => {
 
     const questions = await response.json();
     res.json(questions);
-    console.log("worked!")
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: 'Could not fetch questions' });

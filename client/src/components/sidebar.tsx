@@ -2,7 +2,7 @@ import { useState } from "react"
 import FlashcardSetList from "./flashcardSetList";
 
 // sidebar currently does not work as intended because I didn't think about the structure enough before trying to implement this
-export default function Sidebar() {
+export default function Sidebar({ openUsers }: {openUsers: ()=>void}) {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const handleCollapse = () => {
@@ -18,6 +18,8 @@ export default function Sidebar() {
                     </div>
 
                     <FlashcardSetList/>
+
+                    <button className="mt-auto hover:cursor-pointer bg-purple-800 px-3 py-1 rounded-md" onClick={openUsers}>Open Users</button>
                 </div>
                 ) : (
                 <div className="text-black px-4 py-3 min-h-screen">

@@ -4,6 +4,7 @@ import Sidebar from './components/sidebar.tsx'
 import FlashcardCarousel from './components/flashcardCarousel.tsx'
 import type { FlashcardInfo } from './types.ts'
 import FlashcardForm from './components/flashcardForm.tsx'
+import UsersPopup from './components/usersPopup.tsx'
 
 let runningId = 0
 
@@ -13,6 +14,10 @@ function App() {
 
   const [newQuestion, setNewQuestion] = useState('');
   const [newAnswer, setNewAnswer] = useState('');
+
+  const [isViewingUsers, setIsViewingUsers] = useState(false);
+
+  const [activeUserId, setActiveUserId] = useState<string>('');
 
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -45,7 +50,7 @@ function App() {
   return (
     <>
       <div className="flex flex-row">
-        <Sidebar/>
+        <Sidebar openUsers={() => setIsViewingUsers(true)}/>
         <div className="mx-auto self-center flex-col text-center">
           {flashcardInfos.length > 0 ? (
             <FlashcardCarousel flashcards={flashcardInfos}/>
@@ -68,6 +73,8 @@ function App() {
           <button className="bg-purple-800 text-white hover:cursor-pointer rounded-md max-w-48 px-3 py-1 self-center">Add Flashcard!</button>
         </form>
       </FlashcardForm>
+
+      <UsersPopup openForm={isViewingUsers} closeForm={() => setIsViewingUsers(false)} setActiveUserId={setActiveUserId} activeUserId={activeUserId}/>
     </>
   )
 }
