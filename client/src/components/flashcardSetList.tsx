@@ -1,4 +1,5 @@
 import { useState } from "react";
+import posthog from "posthog-js";
 
 let nextId: number = 0;
 
@@ -23,6 +24,7 @@ export default function FlashcardSetList() {
     const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
         setFlashcardSetTitles(titles => [...titles, {id: nextId++, value: newTitle}]);
+        posthog.capture('flashcard_set_created');
         setNewTitle('');
         setIsAdding(false);
     }
@@ -33,7 +35,10 @@ export default function FlashcardSetList() {
                 {flashcardSetTitles.map(flashcardSetTitle => (
                     <li className="flex flex-row justify-between hover:cursor-pointer mb-1.5">
                         <p className="overflow-hidden max-w-[90%] font-light">{flashcardSetTitle.value}</p>
-                        <p onClick={() => {setFlashcardSetTitles(flashcardSetTitles.filter(title => title.id !== flashcardSetTitle.id))}}>X</p>
+                        <p onClick={() => {
+                            setFlashcardSetTitles(flashcardSetTitles.filter(title => title.id !== flashcardSetTitle.id));
+                            posthog.capture('flashcard_set_deleted');
+                        }}>X</p>
                     </li>
                 ))}
             </ul>
