@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import UserBox from "./userBox";
 import type { User } from "../types";
 
@@ -59,11 +60,13 @@ export default function UsersPopup({openForm, closeForm, setActiveUserId, active
                 },
                 body: JSON.stringify(userData)
             });
-            
+
             setLastUsedIdNum(currNum => currNum+1);
             setUsers(currUsers => [...currUsers, {name: newName, id: `${lastUsedIdNum + 1}`}]);
+            posthog.capture('user_created');
         } catch (err) {
             console.log(err);
+            posthog.captureException(err);
         }
     }
 
@@ -77,8 +80,10 @@ export default function UsersPopup({openForm, closeForm, setActiveUserId, active
             })
 
             setUsers(currUsers => currUsers.filter(user => (user.id as unknown) as string !== id));
+            posthog.capture('user_deleted');
         } catch (err) {
             console.log(err);
+            posthog.captureException(err);
         }
     }
 
@@ -95,8 +100,10 @@ export default function UsersPopup({openForm, closeForm, setActiveUserId, active
             });
 
             fetchUsers();
+            posthog.capture('user_updated');
         } catch (err) {
             console.log(err);
+            posthog.captureException(err);
         }
     }
 

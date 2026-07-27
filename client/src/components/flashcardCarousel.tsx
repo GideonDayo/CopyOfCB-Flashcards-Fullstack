@@ -1,4 +1,5 @@
 import { useState } from "react";
+import posthog from "posthog-js";
 import type { FlashcardInfo } from "../types";
 import Flashcard from "./flashcard";
 
@@ -10,12 +11,14 @@ export default function FlashcardCarousel({flashcards}: {flashcards: FlashcardIn
         setCurrentFlashcardIndex(
             currIndex => currIndex === 0 ? flashcards.length - 1 : currentFlashcardIndex - 1
         );
+        posthog.capture('flashcard_navigated', { direction: 'prev' });
     }
 
     const handleNextClick = () => {
         setCurrentFlashcardIndex(
             currIndex => (currIndex + 1) % flashcards.length
-        )
+        );
+        posthog.capture('flashcard_navigated', { direction: 'next' });
     }
 
     return (

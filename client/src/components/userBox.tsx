@@ -1,4 +1,5 @@
 import { useState } from "react";
+import posthog from "posthog-js";
 
 export default function UserBox({id, name, deleteFunc, updateFunc, isActive, onActivate}: {id: string, name: string, deleteFunc: (idToDel:string)=>void, updateFunc: (idToUpd: string, newName: string)=>void, isActive: boolean, onActivate: ()=>void}) {
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -31,7 +32,12 @@ export default function UserBox({id, name, deleteFunc, updateFunc, isActive, onA
                 <div className="self-center">
                     <button className="bg-purple-800 text-white hover:cursor-pointer rounded-md max-w-48 px-3 py-1 mr-2" onClick={() => setIsEditing(true)}>Edit</button>
                     <button className="bg-purple-800 text-white hover:cursor-pointer rounded-md max-w-48 px-3 py-1 mr-2" onClick={handleDelete}>Delete</button>
-                    <button className="bg-purple-800 text-white hover:cursor-pointer rounded-md max-w-48 px-3 py-1" onClick={onActivate}>Set Active</button>
+                    <button className="bg-purple-800 text-white hover:cursor-pointer rounded-md max-w-48 px-3 py-1" onClick={() => {
+                        posthog.reset();
+                        posthog.identify(id, { name });
+                        posthog.capture('user_activated');
+                        onActivate();
+                    }}>Set Active</button>
                 </div>
             </div>
         ) : (

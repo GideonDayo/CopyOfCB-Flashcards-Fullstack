@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import posthog from 'posthog-js'
 import './App.css'
 import Sidebar from './components/sidebar.tsx'
 import FlashcardCarousel from './components/flashcardCarousel.tsx'
@@ -22,6 +23,7 @@ function App() {
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
     setFlashcardInfos(currFlashcardInfos => [...currFlashcardInfos, {id: runningId++, question: newQuestion, answer: newAnswer}]);
+    posthog.capture('flashcard_created', { method: 'manual' });
     setNewQuestion('');
     setNewAnswer('');
     setIsAdding(false);
@@ -36,7 +38,12 @@ function App() {
   }
 
   const handleAdding = () => {
-    setIsAdding(currIsAdding => !currIsAdding);
+    setIsAdding(currIsAdding => {
+      if (!currIsAdding) {
+        posthog.capture('add_flashcard_form_opened');
+      }
+      return !currIsAdding;
+    });
   }
 
   const handleGenerateRandom = async () => {
@@ -44,6 +51,7 @@ function App() {
     const data = await res.json();
     const randomFlashcards = await data.map((elm:any) => ({id: runningId++, question: elm.question.text, answer: elm.correctAnswer}));
     setFlashcardInfos(currFlashcardInfos => [...currFlashcardInfos, ...randomFlashcards]);
+    posthog.capture('random_flashcards_generated', { count: randomFlashcards.length });
   }
 
   // would have to move flashcard set list logic here to avoid messy logic

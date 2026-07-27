@@ -1,10 +1,14 @@
 import { useState } from "react"
+import posthog from "posthog-js"
 
 export default function Flashcard({question, answer, hidden}: {question: string, answer: string, hidden: boolean}) {
     const [showAnswer, setShowAnswer] = useState(false);
 
     const handleClick = () => {
-        setShowAnswer(showAnswer => !showAnswer);
+        setShowAnswer(showAnswer => {
+            posthog.capture('flashcard_flipped', { revealed: !showAnswer });
+            return !showAnswer;
+        });
     }
 
     return (
