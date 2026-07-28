@@ -14,14 +14,23 @@ app.use('/api/users', usersRouter);
 
 const startServer = async () => {
     try {
-        await redisClient.connect();
-        console.log('connected to redis');
+        // Only attempt to connect to Redis if a URL is provided. This prevents startup failures
+        // on hosting platforms where Redis isn't attached yet.
+        if (process.env.REDIS_URL || process.env.DB_URL || process.env.REDIS) {
+            await redisClient.connect();
+            console.log('connected to redis');
+        } else {
+            console.log('No Redis URL provided, skipping redis connect');
+        }
 
-        app.listen(process.env.PORT, () => {
-            console.log(`Server on http://localhost:${process.env.PORT}`);
+        const PORT = process.env.PORT || 3000;
+        app.listen(PORT, () => {
+            console.log(`Server listening on port ${PORT}`);
         });
     } catch (err) {
-        console.log('failed to connect to redis', err);
+        console.error('failed to start server', err);
+        // Exit with non-zero so the platform knows the start failed
+        process.exit(1);
     }
 }
 startServer();

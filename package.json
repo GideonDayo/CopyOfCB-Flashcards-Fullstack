@@ -6,7 +6,7 @@
   "workspaces": ["client", "server"],
   "scripts": {
     "dev": "concurrently \"cd client && npm run dev\" \"cd server && node index.js\"",
-    "build": "npm run build -w=client"
+    "build": "npm run build -w=client",
+    "start": "node server/index.js"
   }
-
 }
